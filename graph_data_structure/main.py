@@ -1,12 +1,34 @@
+import sys
 import graph
+
+######################################################
+"""
+Read the graph from input.txt
+"""
+######################################################
+inputFile = open('input.txt','r')
+
+nm = [int(x) for x in inputFile.readline().split()]
+N = nm[0]
+M = nm[1]
 
 myGraph = graph.Graph()
 
-myGraph.addEdge(0, 1)
-myGraph.addEdge(1, 0)
-myGraph.addEdge(1, 2)
-myGraph.addEdge(2, 1)
-myGraph.addEdge(0, 2)
-myGraph.addEdge(2, 0)
+for inputEdge in inputFile:
+    e = [int(x) for x in inputEdge.split()]
+    from_v = e[0]
+    to_v = e[1]
+    myGraph.addEdge(from_v, to_v)
 
-print(myGraph.numVertices)
+######################################################
+
+######################################################
+"""
+Write the graph on output.txt
+"""
+######################################################
+outputFile = open('output.txt','w')
+for n in myGraph.getVertices():
+    outputFile.write(str(myGraph.getVertex(n)))
+    outputFile.write("\n")
+######################################################

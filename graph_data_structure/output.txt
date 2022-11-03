@@ -1,0 +1,6 @@
+0 connected to: [1, 2]
+1 connected to: []
+2 connected to: [4]
+4 connected to: [3, 5]
+3 connected to: [2, 0]
+5 connected to: []

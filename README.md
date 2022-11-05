@@ -17,3 +17,8 @@ Given an input graph $G(V,E)$ and integer $k$, find a summary graph $\pmb{S}$ fo
 
 - `graph_data_structure`: containes the basic graph data structure implementation. We rely on the Python implelemtation proposed in this [website](https://towardsdatascience.com/a-complete-guide-to-graphs-in-python-845a0a3381a1). The code in the folder reads a graph from file (input.txt) and prints it on the output stream and in a file named output.txt.
     - *input.txt* file structure: the first line contains two integers *N* and *M* which are the number of nodes and the number of edges respectively. The *M* following lines are populated by couples of integers *u* *v* which represent an edge from node *u* to node *v*
+    
+- `k-Gs`: implementation of all the algorithms proposed by LeFevre and Terzi to solve the k-Gs problem
+    - `greedy`: baseline *Greedy* algorithm
+    - `SamplePairs`: *SamplePairs* algorithm
+    - `LinearCheck`: *LinearCheck* algorithm

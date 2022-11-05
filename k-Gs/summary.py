@@ -49,8 +49,8 @@ class Summary:
         Find the supernode which containes the component with id componentId.
         If there it does not exist, return None.
         """
-        if(self.components[componentId]):
-            return self.superList.get(components[componentId])
+        if componentId in self.components:
+            return self.superList.get(self.components[componentId])
         
         return None
     

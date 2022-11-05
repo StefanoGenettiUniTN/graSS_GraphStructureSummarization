@@ -21,4 +21,6 @@ Given an input graph $G(V,E)$ and integer $k$, find a summary graph $\pmb{S}$ fo
 - `k-Gs`: implementation of all the algorithms proposed by LeFevre and Terzi to solve the k-Gs problem
     - `greedy`: baseline *Greedy* algorithm
     - `SamplePairs`: *SamplePairs* algorithm
+        - `kgs_sample_pairs_constant(graph, summary, k, num_pair)`: in this implementation of the SamplePairs algorithm, we pick a constant number of pairs in every round $K$. The number of pairs which are picked at every step is set by parameter num_pair
+        - `kgs_sample_pairs_proportional(graph, summary, k, c_const)`: in this implementation of the SamplePairs algorithm, at every iteration $t$ we may sample pairs $P(t)$ with cardinality proportional to the number of supernodes $n(t)$ in the graph summary at iteration $t$: $|P(t)| = \mathit{c_const}*(n(t))$   
     - `LinearCheck`: *LinearCheck* algorithm

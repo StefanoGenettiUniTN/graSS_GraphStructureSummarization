@@ -2,6 +2,7 @@ import sys
 import graph
 import summary
 from grass import kgs_greedy
+from grass import kgs_sample_pairs_constant
 
 ######################################################
 """
@@ -46,7 +47,7 @@ for c in myGraph.getVertices():
         supernode_from.addNeighbor(supernode_to.getId(), 1)
 ######################################################
 
-kgs_greedy(myGraph, mySummary, 1)
+kgs_sample_pairs_constant(myGraph, mySummary, 3, 2)
 
 ######################################################
 """

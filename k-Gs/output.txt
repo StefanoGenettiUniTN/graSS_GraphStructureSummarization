@@ -1,15 +1,15 @@
+supernode [0] 
+ cardinality: 1 
+ connected to (id, number_of_edges): [(6, 1)] 
+ components: {0} 
+ internal edges: 0
 supernode [2] 
  cardinality: 1 
- connected to (id, number_of_edges): [(5, 1)] 
+ connected to (id, number_of_edges): [(6, 1)] 
  components: {2} 
  internal edges: 0
-supernode [5] 
- cardinality: 2 
- connected to (id, number_of_edges): [(2, 1), (6, 3)] 
- components: {1, 3} 
- internal edges: 1
 supernode [6] 
- cardinality: 2 
- connected to (id, number_of_edges): [(5, 3)] 
- components: {0, 4} 
- internal edges: 0
+ cardinality: 3 
+ connected to (id, number_of_edges): [(0, 1), (2, 1)] 
+ components: {1, 3, 4} 
+ internal edges: 3

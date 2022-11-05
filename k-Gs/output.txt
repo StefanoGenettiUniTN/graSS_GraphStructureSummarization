@@ -1,0 +1,5 @@
+supernode [8] 
+ cardinality: 5 
+ connected to (id, number_of_edges): [] 
+ components: {0, 1, 2, 3, 4} 
+ internal edges: 5

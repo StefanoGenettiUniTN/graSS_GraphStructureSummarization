@@ -46,7 +46,7 @@ for c in myGraph.getVertices():
         supernode_from.addNeighbor(supernode_to.getId(), 1)
 ######################################################
 
-kgs_greedy(myGraph, mySummary, 2)
+kgs_greedy(myGraph, mySummary, 1)
 
 ######################################################
 """

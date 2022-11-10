@@ -4,6 +4,7 @@ import supernode
 from itertools import combinations
 import numpy as np
 import random
+import math
 
 def kgs_greedy(graph, summary, k):
     '''
@@ -426,6 +427,259 @@ def kgs_linear_check(graph, summary, k):
         #Decrease number of supernode
         supernodeCounter -=1
 
+def gs(graph, summary):
+    '''
+    Given an input graph G(V,E) with adjacency matrix A, find a summary S of this
+    graph with expected adjacency matrix \bar{A} such that the total number of bits
+
+        Tb(\bar{A}) = B(\bar{A})+B(A|\bar{A})
+
+    is minimized.
+    '''
+
+    #Number of supernodes
+    k = len(summary.superList)
+
+    #Number of vertices original graph
+    n = graph.numVertices
+    
+    #initial Tb
+    tb = computeTb(graph, summary, n, k)
+
+    #stopping condition: there is no merging of supernodes that can improve
+    #the objective function Tb
+    stopping_condition = False
+
+    iterationCounter = 0
+    while stopping_condition==False:
+        #Check all the possible couples of supernodes to find the couple to be merged
+        best_tb = tb
+        stopping_condition = True
+        possibleSuperCouple = list(combinations(summary.superList.keys(), 2))
+        
+        iterationCounter += 1
+
+        for c in possibleSuperCouple:
+            s1 = summary.getSupernode(c[0])
+            s2 = summary.getSupernode(c[1])
+
+            '''
+            Simulate merge and compute the objective function Tb
+            '''
+            
+            tb_tmp = tb
+
+            # STEP 1: update B(\bar{A})
+            previousBa = (graph.numVertices+pow(k, 2)+k-1) * math.log(graph.numVertices, 2)
+            currentBa = (graph.numVertices+pow(k-1, 2)+k-2) * math.log(graph.numVertices, 2)
+            tb_tmp -= previousBa
+            tb_tmp += currentBa
+            # ...end step 1
+
+            # STEP 2: update B(A|\bar{A})
+
+            #Create new supernode
+            supernodeS3 = supernode.Supernode(summary.numSupernodes)
+
+            #Set internal_edges[supernodeS3] = internal_edges[supernodeS1] + internal_edges[supernodeS3] + edges between supernodeS1 and supernodeS3
+            supernodeS3.incrementInternalEdges(s1.getInternalEdges())
+            supernodeS3.incrementInternalEdges(s2.getInternalEdges())
+            supernodeS3.incrementInternalEdges(s1.getWeight(s2.id))
+
+            #Total number of components in supernode S3
+            supernodeS3TotNodes = s1.cardinality + s2.cardinality
+
+            #Internal adjacency of S3
+            internal_adj = (2*supernodeS3.getInternalEdges())/(supernodeS3TotNodes*(supernodeS3TotNodes-1))
+
+            #For each possible couple of S3 components, we update the B(A | \bar{A})
+            supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+            possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+            
+            for s3_couple in possibleS3ComponentCouple:
+                
+                c1 = s3_couple[0]
+                c2 = s3_couple[1]
+
+                #Compute previous contribution of c1 c2 in the computation
+                #of B(A | \bar{A})
+                previousBa_a = computeBaa_ij(graph, summary, c1, c2)
+
+                #Compute current contribution of c1 c2 in the computation
+                #of B(A | \bar{A})
+                if internal_adj==0 or internal_adj==1:
+                    currentBa_a = 0
+                else:
+                    adj_c1_c2 = graph.getAdjacency(c1, c2)
+                    currentBa_a = -adj_c1_c2 * math.log(internal_adj, 2)-(1-adj_c1_c2) * math.log((1-internal_adj),2) 
+
+                tb_tmp -= previousBa_a
+                tb_tmp += currentBa_a
+
+            #Copy all the neighbours of S1 (different from S2) to S3
+            for n in s1.getConnections():
+                if n != s2.id:
+                    w = s1.getWeight(n)
+                    supernodeS3.addNeighbor(n, w)
+
+            #Copy all the neighbours of S2 (different from S2) to S3: if a neighbour n has been already added in the previous step, increment the weight by 1
+            for n in s2.getConnections():
+                if n != s1.id:
+                    w = s2.getWeight(n)
+                    supernodeS3.updateNeighbor(n, w)
+            
+            #For each neighbour of s3 update update the B(A | \bar{A})
+            for n in supernodeS3.getConnections():
+                
+                supernodeN = summary.getSupernode(n)
+
+                #External adjacency between nodes in S3 and nodes in its neighbour n
+                external_adj = supernodeS3.getWeight(n)/(supernodeS3TotNodes*supernodeN.cardinality)
+
+                #For each possible couple between S3 and components and n components,
+                #update the B(A | \bar{A})
+                for c1 in supernodeN.getComponents():
+                    for c2 in s1.getComponents():
+                        #Compute previous contribution of c1 c2 in the computation
+                        #of B(A | \bar{A})
+                        previousBa_a = computeBaa_ij(graph, summary, c1, c2)
+
+                        #Compute current contribution of c1 c2 in the computation
+                        #of B(A | \bar{A})
+                        if external_adj==0 or external_adj==1:
+                            currentBa_a = 0
+                        else:
+                            adj_c1_c2 = graph.getAdjacency(c1, c2)
+                            currentBa_a = -adj_c1_c2 * math.log(external_adj, 2)-(1-adj_c1_c2) * math.log((1-external_adj),2) 
+
+                        tb_tmp -= previousBa_a
+                        tb_tmp += currentBa_a
+
+                    for c2 in s2.getComponents():
+                        #Compute previous contribution of c1 c2 in the computation
+                        #of B(A | \bar{A})
+                        previousBa_a = computeBaa_ij(graph, summary, c1, c2)
+
+                        #Compute current contribution of c1 c2 in the computation
+                        #of B(A | \bar{A})
+                        if external_adj==0 or external_adj==1:
+                            currentBa_a = 0
+                        else:
+                            adj_c1_c2 = graph.getAdjacency(c1, c2)
+                            currentBa_a = -adj_c1_c2 * math.log(external_adj, 2)-(1-adj_c1_c2) * math.log((1-external_adj),2) 
+
+                        tb_tmp -= previousBa_a
+                        tb_tmp += currentBa_a              
+
+            if tb_tmp<best_tb:
+                best_tb = tb_tmp
+                bestS1 = s1.getId()
+                bestS2 = s2.getId()
+                stopping_condition = False
+
+            '''
+            end simulate merge
+            '''
+
+        if stopping_condition == False:
+            ###Merge the couple which leads to the smaller Re increment
+            summary.merge(bestS1, bestS2)
+            
+            #Decrease number of supernode
+            k -= 1
+
+            #Update tb
+            #tb = computeTb(graph, summary, graph.numVertices, k)
+            tb = best_tb
+
+def computeTb(graph, summary, n, k):
+    '''
+    Auxiliary function for gs: computation of the objective function
+    '''
+
+    #Compute B(a | bar{A})
+    ba_a = 0
+
+    possibleCouple = list(combinations(graph.vertList.keys(), 2))
+    
+    for c in possibleCouple:
+        
+        #Graph components
+        c1 = c[0]
+        c2 = c[1]
+
+        #Corresponding supernodes
+        s1 = summary.getComponentSupernode(c1)
+        s2 = summary.getComponentSupernode(c2)
+
+        s1_cardinality = s1.cardinality
+        s2_cardinality = s2.cardinality
+
+        if s1.getId() == s2.getId():
+            #Same supernode
+            s1_internalEdges = s1.getInternalEdges()
+            expected_adj_c1_c2 = (2*s1_internalEdges)/(s1_cardinality*(s1_cardinality-1))
+
+        else:
+            #Distinct supernode
+            s1_s2_edges = s1.getWeight(s2.getId())
+            expected_adj_c1_c2 = (s1_s2_edges)/(s1_cardinality*s2_cardinality)
+
+        if expected_adj_c1_c2==0 or expected_adj_c1_c2==1:
+            ba_a += 0
+        else:
+            adj_c1_c2 = graph.getAdjacency(c1, c2)
+            ba_a += -adj_c1_c2 * math.log(expected_adj_c1_c2, 2)-(1-adj_c1_c2) * math.log((1-expected_adj_c1_c2),2)
+
+    #...end compute B(A | bar{A})
+
+    #Compute B(\bar{A})
+    ba = (n+pow(k, 2)+k-1) * math.log(n, 2)
+
+    #compute Tb
+    tb = ba + ba_a
+
+    return tb
+
+def computeBaa_ij(graph, summary, i, j):
+    '''
+    Auxiliary function for gs: computation of the contribution of the couple
+    i, j in the computation of the number of bits required to describe A given \bar{A}
+    '''
+
+    #Compute B(a | bar{A})
+    ba_a = 0
+        
+    #Graph components
+    c1 = i
+    c2 = j
+
+    #Corresponding supernodes
+    s1 = summary.getComponentSupernode(c1)
+    s2 = summary.getComponentSupernode(c2)
+
+    s1_cardinality = s1.cardinality
+    s2_cardinality = s2.cardinality
+
+    if s1.getId() == s2.getId():
+        #Same supernode
+        s1_internalEdges = s1.getInternalEdges()
+        expected_adj_c1_c2 = (2*s1_internalEdges)/(s1_cardinality*(s1_cardinality-1))
+
+    else:
+        #Distinct supernode
+        s1_s2_edges = s1.getWeight(s2.getId())
+        expected_adj_c1_c2 = (s1_s2_edges)/(s1_cardinality*s2_cardinality)
+
+    if expected_adj_c1_c2==0 or expected_adj_c1_c2==1:
+        ba_a += 0
+    else:
+        adj_c1_c2 = graph.getAdjacency(c1, c2)
+        ba_a += -adj_c1_c2 * math.log(expected_adj_c1_c2, 2)-(1-adj_c1_c2) * math.log((1-expected_adj_c1_c2),2)
+
+    #...end compute B(A | bar{A})
+
+    return ba_a
 
 def kcgs_condense(graph, summary, k):
     '''

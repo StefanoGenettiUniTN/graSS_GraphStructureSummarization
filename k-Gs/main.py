@@ -6,6 +6,7 @@ from grass import kgs_sample_pairs_constant
 from grass import kgs_sample_pairs_proportional
 from grass import kgs_linear_check
 from grass import kcgs_condense
+from grass import gs
 
 ######################################################
 """
@@ -50,7 +51,7 @@ for c in myGraph.getVertices():
         supernode_from.addNeighbor(supernode_to.getId(), 1)
 ######################################################
 
-kcgs_condense(myGraph, mySummary, 2)
+gs(myGraph, mySummary)
 
 ######################################################
 """

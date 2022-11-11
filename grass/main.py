@@ -51,7 +51,12 @@ for c in myGraph.getVertices():
         supernode_from.addNeighbor(supernode_to.getId(), 1)
 ######################################################
 
-gs(myGraph, mySummary)
+#kgs_greedy(myGraph, mySummary, 4)
+#kgs_sample_pairs_constant(myGraph, mySummary, 2, 3)
+#kgs_sample_pairs_proportional(myGraph, mySummary, 2, 1)
+#kgs_linear_check(myGraph, mySummary, 4)
+#gs(myGraph, mySummary)
+kcgs_condense(myGraph, mySummary, 3)
 
 ######################################################
 """

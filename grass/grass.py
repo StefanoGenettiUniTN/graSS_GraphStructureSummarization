@@ -45,10 +45,14 @@ def kgs_greedy(graph, summary, k):
 
             #For each possible couple of S3 components, we update the reconstruction error
             #with respect to the ground truth
-            for c1 in s1.getComponents():
-                for c2 in s2.getComponents():
-                    trueAdjacency = graph.getAdjacency(c1, c2)
-                    reconstructionError += abs((trueAdjacency)-(internal_adj))
+            supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+            possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+            
+            for s3_couple in possibleS3ComponentCouple:
+                c1 = s3_couple[0]
+                c2 = s3_couple[1]
+                trueAdjacency = graph.getAdjacency(c1, c2)
+                reconstructionError += abs((trueAdjacency)-(internal_adj))
 
             ###end compute internal reconstruction error###
 
@@ -154,10 +158,14 @@ def kgs_sample_pairs_constant(graph, summary, k, num_pair):
 
             #For each possible couple of S3 components, we update the reconstruction error
             #with respect to the ground truth
-            for c1 in s1.getComponents():
-                for c2 in s2.getComponents():
-                    trueAdjacency = graph.getAdjacency(c1, c2)
-                    reconstructionError += abs((trueAdjacency)-(internal_adj))
+            supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+            possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+            
+            for s3_couple in possibleS3ComponentCouple:
+                c1 = s3_couple[0]
+                c2 = s3_couple[1]
+                trueAdjacency = graph.getAdjacency(c1, c2)
+                reconstructionError += abs((trueAdjacency)-(internal_adj))
 
             ###end compute internal reconstruction error###
 
@@ -265,10 +273,14 @@ def kgs_sample_pairs_proportional(graph, summary, k, c_const):
 
             #For each possible couple of S3 components, we update the reconstruction error
             #with respect to the ground truth
-            for c1 in s1.getComponents():
-                for c2 in s2.getComponents():
-                    trueAdjacency = graph.getAdjacency(c1, c2)
-                    reconstructionError += abs((trueAdjacency)-(internal_adj))
+            supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+            possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+            
+            for s3_couple in possibleS3ComponentCouple:
+                c1 = s3_couple[0]
+                c2 = s3_couple[1]
+                trueAdjacency = graph.getAdjacency(c1, c2)
+                reconstructionError += abs((trueAdjacency)-(internal_adj))
 
             ###end compute internal reconstruction error###
 
@@ -369,10 +381,14 @@ def kgs_linear_check(graph, summary, k):
 
             #For each possible couple of S3 components, we update the reconstruction error
             #with respect to the ground truth
-            for c1 in s1.getComponents():
-                for c2 in s2.getComponents():
-                    trueAdjacency = graph.getAdjacency(c1, c2)
-                    reconstructionError += abs((trueAdjacency)-(internal_adj))
+            supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+            possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+            
+            for s3_couple in possibleS3ComponentCouple:
+                c1 = s3_couple[0]
+                c2 = s3_couple[1]
+                trueAdjacency = graph.getAdjacency(c1, c2)
+                reconstructionError += abs((trueAdjacency)-(internal_adj))
 
             ###end compute internal reconstruction error###
 
@@ -740,10 +756,14 @@ def kcgs_condense(graph, summary, k):
 
                 #For each possible couple of S3 components, we update the reconstruction error
                 #with respect to the ground truth
-                for c1 in s1.getComponents():
-                    for c2 in s2.getComponents():
-                        trueAdjacency = graph.getAdjacency(c1, c2)
-                        reconstructionError += abs((trueAdjacency)-(internal_adj))
+                supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+                possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+                
+                for s3_couple in possibleS3ComponentCouple:
+                    c1 = s3_couple[0]
+                    c2 = s3_couple[1]
+                    trueAdjacency = graph.getAdjacency(c1, c2)
+                    reconstructionError += abs((trueAdjacency)-(internal_adj))
 
                 ###end compute internal reconstruction error###
 
@@ -835,10 +855,15 @@ def kcgs_condense(graph, summary, k):
 
                 #For each possible couple of S3 components, we update the reconstruction error
                 #with respect to the ground truth
-                for c1 in s1.getComponents():
-                    for c2 in s2.getComponents():
-                        trueAdjacency = graph.getAdjacency(c1, c2)
-                        reconstructionError += abs((trueAdjacency)-(internal_adj))
+                supernodeS3ComponentSet = s1.getComponents().union(s2.getComponents())
+                possibleS3ComponentCouple = list(combinations(supernodeS3ComponentSet, 2))
+            
+                for s3_couple in possibleS3ComponentCouple:
+                    
+                    c1 = s3_couple[0]
+                    c2 = s3_couple[1]
+                    trueAdjacency = graph.getAdjacency(c1, c2)
+                    reconstructionError += abs((trueAdjacency)-(internal_adj))
 
                 ###end compute internal reconstruction error###
 
